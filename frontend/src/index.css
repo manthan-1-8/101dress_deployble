@@ -13,13 +13,14 @@
 @layer base {
   :root {
     /* Core palette - Warm luxury neutrals */
-    --background: 40 33% 97%;
+    /* Updated to softer/creamier ivory for eye comfort */
+    --background: 36 30% 94%;
     --foreground: 30 15% 12%;
 
-    --card: 40 30% 95%;
+    --card: 36 30% 96%;
     --card-foreground: 30 15% 12%;
 
-    --popover: 40 33% 97%;
+    --popover: 36 30% 96%;
     --popover-foreground: 30 15% 12%;
 
     /* Primary - Deep warm brown */
@@ -57,7 +58,7 @@
     --radius: 0.5rem;
 
     /* Sidebar colors */
-    --sidebar-background: 40 33% 97%;
+    --sidebar-background: 36 30% 94%;
     --sidebar-foreground: 30 15% 12%;
     --sidebar-primary: 30 20% 18%;
     --sidebar-primary-foreground: 40 30% 95%;
@@ -131,7 +132,7 @@
   }
 
   .hover-glow {
-    @apply transition-all duration-700 hover:shadow-[0_0_25px_rgba(177,144,99,0.3)];
+    @apply transition-all duration-700 hover:shadow-[0_0_25px_rgba(177, 144, 99, 0.3)];
   }
 
   /* Header Glass Effect */
@@ -163,4 +164,22 @@
   .text-balance {
     text-wrap: balance;
   }
+}
+
+@keyframes bounce-twice {
+
+  0%,
+  100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+
+  50% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+.animate-bounce-twice {
+  animation: bounce-twice 1s 2 alternate;
 }

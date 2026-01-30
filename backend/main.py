@@ -1,12 +1,24 @@
 from datetime import datetime, timedelta
 from typing import List, Optional
-from fastapi import FastAPI, Depends, HTTPException, status
+import shutil
+import os
+from pathlib import Path
+from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, File
+from fastapi.staticfiles import StaticFiles
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlmodel import Session, SQLModel, create_engine, select
-from .models import User, Item, Order, ItemStatus, UserCreate, Token, UserRead
+from .models import User, Item, Order, ItemStatus, UserCreate, Token, UserRead, OrderStatus
+
+# --- RESPONSE MODELS ---
+class OrderWithItem(SQLModel):
+    id: int
+    type: str
+    status: str
+    escrow_amount: float
+    item: Item
 
 # --- AUTH CONFIG ---
 SECRET_KEY = "your-secret-key-for-dev-only"
@@ -70,9 +82,62 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# --- STATIC FILES ---
+# Ensure upload directory exists
+UPLOAD_DIR = Path("frontend/public/assets/uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+
+# Mount the static directory so uploaded files are accessible via URL
+# Note: In production, you'd serve this via Nginx or S3, but for dev this works if frontend/public is served correctly
+# Since Vite serves public folder at root /, we might not need this if we save directly there?
+# But uploading via backend saves to disk. We need to tell backend where to save.
+# Let's save to frontend/public so Vite sees it.
+
+@app.post("/api/upload")
+async def upload_file(file: UploadFile = File(...)):
+    file_location = UPLOAD_DIR / file.filename
+    with open(file_location, "wb+") as file_object:
+        shutil.copyfileobj(file.file, file_object)
+    
+    # Return absolute URL path relative to public folder for frontend consumption
+    return {"url": f"/assets/uploads/{file.filename}"}
+
+
+def fix_existing_images():
+    """Migrate remote images to local assets for performance"""
+    with Session(engine) as session:
+        items = session.exec(select(Item)).all()
+        updates = {
+            "Acne": "/assets/items/acne-jacket.png",
+            "Balenciaga": "/assets/balenciaga_sneakers.png",
+            "Zimmermann": "/assets/ysl_sunset.png", # Fallback
+            "Gucci": "/assets/gucci_belt.png",
+            "Prada": "/assets/prada_cleo.png",
+            "YSL": "/assets/ysl_sunset.png",
+            "Chanel": "/assets/chanel_classic_flap.png"
+        }
+        for item in items:
+            changed = False
+            # Check for keyword matches
+            for key, path in updates.items():
+                if key.lower() in item.title.lower() and item.image != path:
+                    item.image = path
+                    changed = True
+                    break
+            
+            # General fallback for any remaining unsplash links
+            if not changed and "http" in item.image:
+                item.image = "/assets/prada_cleo.png"
+                changed = True
+            
+            if changed:
+                session.add(item)
+        session.commit()
+
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
+    fix_existing_images()
     with Session(engine) as session:
         if not session.exec(select(User)).first():
             hashed_pw = get_password_hash("password123")
@@ -88,6 +153,19 @@ def on_startup():
             )
             session.add(mock_user)
             
+            # Seed another user for order logic
+            seller_user = User(
+                id="u2",
+                email="sarah@example.com",
+                hashed_password=hashed_pw,
+                name="Sarah Jenkins",
+                trust_score=98,
+                wallet_balance=12000,
+                escrow_balance=500,
+                avatar="https://i.pravatar.cc/150?u=u2"
+            )
+            session.add(seller_user)
+            
             items = [
                 Item(
                     title="Acne Studios Leather Jacket", 
@@ -99,7 +177,7 @@ def on_startup():
                     sale_price=28500, 
                     rent_price=1500, 
                     deposit=8000, 
-                    image="https://images.unsplash.com/photo-1551028917-a48010bd8f3b?q=80&w=1000", 
+                    image="/assets/items/acne-jacket.png", 
                     seller_id="u1", 
                     verified=True
                 ),
@@ -112,7 +190,7 @@ def on_startup():
                     type="rent", 
                     rent_price=3200, 
                     deposit=10000, 
-                    image="https://images.unsplash.com/photo-1568252542512-9fe8fe9c87bb?q=80&w=1000", 
+                    image="/assets/ysl_sunset.png", 
                     seller_id="u1", 
                     verified=True
                 ),
@@ -124,7 +202,7 @@ def on_startup():
                     condition="A",
                     type="sale",
                     sale_price=55000,
-                    image="https://images.unsplash.com/photo-1582588501339-603a3ba84632?q=80&w=1000",
+                    image="/assets/balenciaga_sneakers.png",
                     seller_id="u1",
                     verified=True
                 ),
@@ -138,7 +216,7 @@ def on_startup():
                     sale_price=145000,
                     rent_price=5500,
                     deposit=25000,
-                    image="https://images.unsplash.com/photo-1584917671242-79017ad30030?q=80&w=1000",
+                    image="/assets/prada_cleo.png",
                     seller_id="u1",
                     verified=True
                 ),
@@ -162,7 +240,7 @@ def on_startup():
                     condition="A",
                     type="sale",
                     sale_price=22000,
-                    image="https://images.unsplash.com/photo-1624222247344-550fb80583dc?q=80&w=1000",
+                    image="/assets/gucci_belt.png",
                     seller_id="u1",
                     verified=True
                 ),
@@ -175,7 +253,7 @@ def on_startup():
                     type="rent",
                     rent_price=4500,
                     deposit=15000,
-                    image="https://images.unsplash.com/photo-1566150905458-1bf1fd113961?q=80&w=1000",
+                    image="/assets/ysl_sunset.png",
                     seller_id="u1",
                     verified=True
                 ),
@@ -242,10 +320,42 @@ def on_startup():
                     image="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=1000",
                     seller_id="u1",
                     verified=True
+                ),
+                # Item for u2 to sell and u1 to buy
+                Item(
+                    title="Chanel Classic Flap",
+                    category="Bags",
+                    brand="Chanel",
+                    size="Medium",
+                    condition="A",
+                    type="sale",
+                    sale_price=450000,
+                    image="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=1000",
+                    seller_id="u2",
+                    verified=True
                 )
             ]
+            
+            # Need to add items first to get IDs? No, usually IDs are auto-generated.
+            # But the objects are not flushed.
+            # We can create order after session.commit() or flush.
             for item in items:
                 session.add(item)
+            session.flush() # Populate IDs
+            
+            # Seed an Order: u1 buys u2's item (last item)
+            chanel_bag = items[-1]
+            mock_order = Order(
+                item_id=chanel_bag.id,
+                buyer_id="u1",
+                seller_id="u2",
+                type="buy",
+                status=OrderStatus.SHIPPED,
+                escrow_amount=chanel_bag.sale_price,
+                days_remaining=0
+            )
+            session.add(mock_order)
+            
             session.commit()
 
 # --- ENDPOINTS ---
@@ -284,8 +394,11 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = D
     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.get("/api/items", response_model=List[Item])
-def read_items(session: Session = Depends(get_session)):
-    return session.exec(select(Item)).all()
+def read_items(seller_id: Optional[str] = None, session: Session = Depends(get_session)):
+    query = select(Item)
+    if seller_id:
+        query = query.where(Item.seller_id == seller_id)
+    return session.exec(query).all()
 
 @app.get("/api/items/{item_id}", response_model=Item)
 def read_item(item_id: int, session: Session = Depends(get_session)):
@@ -312,6 +425,15 @@ def read_user(user_id: str, session: Session = Depends(get_session)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
+
+@app.get("/api/orders", response_model=List[OrderWithItem])
+def read_orders(user_id: Optional[str] = None, session: Session = Depends(get_session)):
+    query = select(Order)
+    if user_id:
+        query = query.where(Order.buyer_id == user_id)
+    orders = session.exec(query).all()
+    # Explicitly ensure items are loaded if lazy (SQLModel usually handles this dynamically in memory if session is active)
+    return orders
 
 if __name__ == "__main__":
     import uvicorn

@@ -3,7 +3,25 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { ShieldCheck } from 'lucide-react';
+import { ShieldCheck, Filter } from 'lucide-react';
+import { Slider } from '@/components/ui/slider';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { Button } from '@/components/ui/button';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 interface Product {
   id: number;
@@ -32,6 +50,10 @@ const fetchProducts = async (): Promise<Product[]> => {
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
+  const [priceRange, setPriceRange] = useState([0, 100000]);
+  const [sizeFilter, setSizeFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+
   const [isVisible, setIsVisible] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -58,13 +80,39 @@ const Products = () => {
   }, []);
 
   const filteredProducts = products.filter((product) => {
+    // Search
     const matchesSearch = product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.brand.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Category
     const matchesCategory = categoryFilter === 'all' || product.category === categoryFilter;
-    return matchesSearch && matchesCategory;
+
+    // Type
+    const matchesType = typeFilter === 'all' ||
+      (typeFilter === 'sale' && (product.type === 'sale' || product.type === 'both')) ||
+      (typeFilter === 'rent' && (product.type === 'rent' || product.type === 'both'));
+
+    // Size
+    const matchesSize = sizeFilter === 'all' || product.size === sizeFilter;
+
+    // Price
+    const hasSalePriceInRange = product.sale_price && product.sale_price >= priceRange[0] && product.sale_price <= priceRange[1];
+    const hasRentPriceInRange = product.rent_price && product.rent_price >= priceRange[0] && product.rent_price <= priceRange[1];
+
+    let matchesPrice = false;
+    if (typeFilter === 'sale') matchesPrice = !!hasSalePriceInRange;
+    else if (typeFilter === 'rent') matchesPrice = !!hasRentPriceInRange;
+    else matchesPrice = !!(hasSalePriceInRange || hasRentPriceInRange);
+
+    // If 'both' type is selected but we are filtering by price, we should ensure at least one applicable price falls in range.
+    // If type is 'all', show if EITHER sale or rent price matches (or if item matches type logic).
+
+    return matchesSearch && matchesCategory && matchesType && matchesSize && matchesPrice;
   });
 
   const categories = ['all', ...Array.from(new Set(products.map(p => p.category)))];
+  const sizes = ['all', ...Array.from(new Set(products.map(p => p.size))).sort()];
+
   const parallaxOffset = scrollY * 0.3;
 
   return (
@@ -74,7 +122,7 @@ const Products = () => {
       {/* Editorial Hero Section with Parallax */}
       <section
         ref={heroRef}
-        className="relative h-[70vh] md:h-[80vh] w-full overflow-hidden"
+        className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden"
       >
         {/* Parallax Background */}
         <div
@@ -84,7 +132,11 @@ const Products = () => {
             transition: 'transform 0.1s ease-out'
           }}
         >
-          <div className="w-full h-full bg-gradient-to-br from-secondary via-cream to-accent" />
+          <img
+            src="/assets/dresses.png"
+            alt="Dresses Collection"
+            className="w-full h-full object-cover object-center"
+          />
         </div>
 
         {/* Gradient Overlay */}
@@ -104,48 +156,139 @@ const Products = () => {
                 Dresses
               </h1>
             </div>
-
-            <p className="text-xl md:text-2xl text-foreground/80 font-light max-w-2xl animate-fade-in-up-delayed-2 leading-relaxed">
-              Curated couture. Rent, sell, and discover pre-loved luxury with confidence.
-            </p>
-          </div>
-        </div>
-
-        {/* Scroll Indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-fade-in-up-delayed-3">
-          <div className="flex flex-col items-center gap-3">
-            <span className="text-foreground/50 text-xs uppercase tracking-[0.3em] font-sans">
-              Browse
-            </span>
-            <div className="w-px h-12 bg-gradient-to-b from-foreground/50 to-transparent" />
           </div>
         </div>
       </section>
 
-      {/* Editorial Filter Bar */}
+      {/* Advanced Filter Bar */}
       <section className="border-b border-border bg-background/95 backdrop-blur-md sticky top-20 z-40">
-        <div className="container mx-auto px-6 md:px-12 lg:px-24 py-8">
-          <div className="flex flex-col md:flex-row gap-8 items-start md:items-center justify-between">
-            {/* Search */}
-            <div className="w-full md:w-auto md:flex-1 max-w-md">
-              <input
-                type="text"
-                placeholder="Search by brand or title..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-0 py-2 bg-transparent border-b border-border focus:border-gold outline-none transition-colors duration-500 text-foreground placeholder:text-muted-foreground font-light"
-              />
+        <div className="container mx-auto px-6 py-4">
+          <div className="flex flex-col gap-6">
+
+            {/* Top Row: Search & Filters Button (Mobile) */}
+            <div className="flex items-center justify-between gap-4">
+              <div className="w-full max-w-sm">
+                <input
+                  type="text"
+                  placeholder="Search collection..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full px-0 py-2 bg-transparent border-b border-border focus:border-gold outline-none text-foreground placeholder:text-muted-foreground font-light text-sm tracking-wide"
+                />
+              </div>
+
+              {/* Desktop Filters */}
+              <div className="hidden lg:flex items-center gap-6">
+                {/* Type Filter */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground">Type</span>
+                  <ToggleGroup type="single" value={typeFilter} onValueChange={(val) => val && setTypeFilter(val)}>
+                    <ToggleGroupItem value="all" aria-label="Toggle all">All</ToggleGroupItem>
+                    <ToggleGroupItem value="sale" aria-label="Toggle sale">Buy</ToggleGroupItem>
+                    <ToggleGroupItem value="rent" aria-label="Toggle rent">Rent</ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
+
+                <div className="w-px h-8 bg-border" />
+
+                {/* Size Filter */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground">Size</span>
+                  <Select value={sizeFilter} onValueChange={setSizeFilter}>
+                    <SelectTrigger className="w-[80px] h-8 text-xs">
+                      <SelectValue placeholder="Size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {sizes.map(size => (
+                        <SelectItem key={size} value={size}>{size === 'all' ? 'All' : size}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="w-px h-8 bg-border" />
+
+                {/* Price Filter */}
+                <div className="flex items-center gap-4 min-w-[200px]">
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground">Price</span>
+                  <Slider
+                    defaultValue={[0, 100000]}
+                    max={100000}
+                    step={1000}
+                    value={priceRange}
+                    onValueChange={setPriceRange}
+                    className="w-[120px]"
+                  />
+                  <span className="text-xs text-muted-foreground w-16 text-right">
+                    ₹{(priceRange[0] / 1000).toFixed(0)}k-{(priceRange[1] / 1000).toFixed(0)}k
+                  </span>
+                </div>
+              </div>
+
+              {/* Mobile Filter Sheet */}
+              <div className="lg:hidden">
+                <Sheet>
+                  <SheetTrigger asChild>
+                    <Button variant="outline" size="sm" className="gap-2">
+                      <Filter className="w-4 h-4" /> Filters
+                    </Button>
+                  </SheetTrigger>
+                  <SheetContent>
+                    <SheetHeader>
+                      <SheetTitle>Filters</SheetTitle>
+                      <SheetDescription>Refine your search</SheetDescription>
+                    </SheetHeader>
+                    <div className="grid gap-6 py-6">
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-sm">Listing Type</h4>
+                        <ToggleGroup type="single" value={typeFilter} onValueChange={(val) => val && setTypeFilter(val)} className="justify-start">
+                          <ToggleGroupItem value="all" className="flex-1">All</ToggleGroupItem>
+                          <ToggleGroupItem value="sale" className="flex-1">Buy</ToggleGroupItem>
+                          <ToggleGroupItem value="rent" className="flex-1">Rent</ToggleGroupItem>
+                        </ToggleGroup>
+                      </div>
+                      <div className="space-y-2">
+                        <h4 className="font-medium text-sm">Size</h4>
+                        <Select value={sizeFilter} onValueChange={setSizeFilter}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Size" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {sizes.map(size => (
+                              <SelectItem key={size} value={size}>{size === 'all' ? 'Any Size' : size}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-4">
+                        <h4 className="font-medium text-sm">Price Range (₹0 - ₹1L)</h4>
+                        <Slider
+                          defaultValue={[0, 100000]}
+                          max={100000}
+                          step={1000}
+                          value={priceRange}
+                          onValueChange={setPriceRange}
+                        />
+                        <div className="flex justify-between text-sm text-muted-foreground">
+                          <span>₹{priceRange[0]}</span>
+                          <span>₹{priceRange[1]}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </SheetContent>
+                </Sheet>
+              </div>
             </div>
 
-            {/* Category Filters */}
-            <nav className="flex gap-6 flex-wrap">
+            {/* Category Pills */}
+            <nav className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
               {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => setCategoryFilter(category)}
-                  className={`text-sm uppercase tracking-[0.2em] transition-colors duration-500 font-sans ${categoryFilter === category
-                      ? 'text-foreground border-b-2 border-gold'
-                      : 'text-muted-foreground hover:text-foreground'
+                  className={`text-xs uppercase tracking-[0.15em] whitespace-nowrap px-3 py-1.5 rounded-full transition-all duration-300 ${categoryFilter === category
+                    ? 'bg-foreground text-background'
+                    : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
                     }`}
                 >
                   {category}
@@ -185,6 +328,7 @@ const Products = () => {
                       <img
                         src={product.image}
                         alt={product.title}
+                        loading="lazy"
                         className="w-full h-full object-cover transition-transform duration-1000 ease-out group-hover:scale-105"
                       />
 
