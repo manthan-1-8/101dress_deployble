@@ -15,17 +15,33 @@ class OrderStatus(str, enum.Enum):
     DISPUTE = "dispute"
     CLOSED = "closed"
 
-class User(SQLModel, table=True):
-    id: str = Field(default=None, primary_key=True)
+class UserBase(SQLModel):
+    email: str = Field(index=True, unique=True)
     name: str
     trust_score: int = Field(default=100)
     wallet_balance: float = Field(default=0.0)
     escrow_balance: float = Field(default=0.0)
     avatar: Optional[str] = None
+
+class User(UserBase, table=True):
+    id: str = Field(default=None, primary_key=True)
+    hashed_password: str
     
     items: List["Item"] = Relationship(back_populates="seller")
     buyer_orders: List["Order"] = Relationship(back_populates="buyer", sa_relationship_kwargs={"foreign_keys": "Order.buyer_id"})
     seller_orders: List["Order"] = Relationship(back_populates="seller", sa_relationship_kwargs={"foreign_keys": "Order.seller_id"})
+
+class UserCreate(SQLModel):
+    email: str
+    password: str
+    name: str
+
+class UserRead(UserBase):
+    id: str
+
+class Token(SQLModel):
+    access_token: str
+    token_type: str
 
 class Item(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
