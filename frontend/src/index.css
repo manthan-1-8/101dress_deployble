@@ -1,1 +1,164 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+  101 DRESSES - Luxury Editorial Design System
+  Aesthetic: High-fashion, editorial, calm, intentional
+  Palette: Warm beige, ivory, soft brown, muted gold
+*/
+
+@layer base {
+  :root {
+    /* Core palette - Warm luxury neutrals */
+    --background: 40 33% 97%;
+    --foreground: 30 15% 12%;
+
+    --card: 40 30% 95%;
+    --card-foreground: 30 15% 12%;
+
+    --popover: 40 33% 97%;
+    --popover-foreground: 30 15% 12%;
+
+    /* Primary - Deep warm brown */
+    --primary: 30 20% 18%;
+    --primary-foreground: 40 30% 95%;
+
+    /* Secondary - Soft warm beige */
+    --secondary: 35 25% 88%;
+    --secondary-foreground: 30 20% 18%;
+
+    /* Muted - Gentle ivory tones */
+    --muted: 38 20% 92%;
+    --muted-foreground: 30 12% 45%;
+
+    /* Accent - Muted gold */
+    --accent: 38 35% 75%;
+    --accent-foreground: 30 20% 15%;
+
+    /* Gold highlight */
+    --gold: 38 50% 55%;
+    --gold-light: 40 45% 80%;
+
+    /* Warm ivory for hero overlays */
+    --ivory: 40 35% 96%;
+    --cream: 38 30% 92%;
+    --warm-brown: 28 18% 25%;
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 40 30% 95%;
+
+    --border: 35 15% 85%;
+    --input: 35 15% 85%;
+    --ring: 38 50% 55%;
+
+    --radius: 0.5rem;
+
+    /* Sidebar colors */
+    --sidebar-background: 40 33% 97%;
+    --sidebar-foreground: 30 15% 12%;
+    --sidebar-primary: 30 20% 18%;
+    --sidebar-primary-foreground: 40 30% 95%;
+    --sidebar-accent: 38 35% 75%;
+    --sidebar-accent-foreground: 30 20% 15%;
+    --sidebar-border: 35 15% 85%;
+    --sidebar-ring: 38 50% 55%;
+  }
+
+  .dark {
+    /* Dark mode - maintain warmth */
+    --background: 30 15% 8%;
+    --foreground: 40 20% 92%;
+
+    --card: 30 15% 10%;
+    --card-foreground: 40 20% 92%;
+
+    --popover: 30 15% 8%;
+    --popover-foreground: 40 20% 92%;
+
+    --primary: 38 50% 55%;
+    --primary-foreground: 30 15% 8%;
+
+    --secondary: 28 18% 15%;
+    --secondary-foreground: 40 20% 92%;
+
+    --muted: 28 15% 12%;
+    --muted-foreground: 35 12% 60%;
+
+    --accent: 38 40% 25%;
+    --accent-foreground: 40 30% 92%;
+
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 40 30% 95%;
+
+    --border: 28 15% 18%;
+    --input: 28 15% 18%;
+    --ring: 38 50% 55%;
+
+    /* Dark sidebar */
+    --sidebar-background: 30 15% 8%;
+    --sidebar-foreground: 40 20% 92%;
+    --sidebar-primary: 38 50% 55%;
+    --sidebar-primary-foreground: 30 15% 8%;
+    --sidebar-accent: 38 40% 25%;
+    --sidebar-accent-foreground: 40 30% 92%;
+    --sidebar-border: 28 15% 18%;
+    --sidebar-ring: 38 50% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+@layer components {
+  /* Premium Button Styles */
+  .btn-editorial-light {
+    @apply px-8 py-4 bg-ivory text-foreground font-sans text-xs uppercase tracking-[0.25em] transition-all duration-700 ease-out hover:bg-gold hover:text-white shadow-lg hover:shadow-2xl;
+  }
+
+  .btn-editorial-dark {
+    @apply px-8 py-4 bg-foreground text-ivory font-sans text-xs uppercase tracking-[0.25em] transition-all duration-700 ease-out hover:bg-warm-brown hover:text-gold shadow-lg hover:shadow-2xl;
+  }
+
+  .hover-glow {
+    @apply transition-all duration-700 hover:shadow-[0_0_25px_rgba(177,144,99,0.3)];
+  }
+
+  /* Header Glass Effect */
+  .header-glass {
+    @apply bg-background/80 backdrop-blur-md border-b border-border/50 shadow-sm;
+  }
+
+  /* Navigation Links */
+  .nav-link {
+    @apply text-sm uppercase tracking-[0.2em] hover:text-gold transition-colors duration-500;
+  }
+
+  .icon-hover {
+    @apply hover:opacity-70 transition-opacity duration-300;
+  }
+
+  /* Editorial Text Styles */
+  .text-editorial {
+    @apply font-serif tracking-tight leading-tight;
+  }
+
+  /* Card Styles */
+  .card-luxury {
+    @apply bg-card border border-border rounded-lg shadow-sm hover:shadow-md transition-all duration-500;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

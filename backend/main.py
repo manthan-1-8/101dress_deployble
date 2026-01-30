@@ -59,6 +59,13 @@ def on_startup():
 def read_items(session: Session = Depends(get_session)):
     return session.exec(select(Item)).all()
 
+@app.get("/api/items/{item_id}", response_model=Item)
+def read_item(item_id: int, session: Session = Depends(get_session)):
+    item = session.get(Item, item_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
+
 @app.post("/api/items", response_model=Item)
 def create_item(item: Item, session: Session = Depends(get_session)):
     session.add(item)
