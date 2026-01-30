@@ -40,20 +40,19 @@ We prevent fraud by controlling:
 
 ## 🏗️ System Architecture (High-Level)
 
-Client Apps (Web / Mobile)
+Buyer App / Seller App
 │
-├── Buyer Interface
-├── Seller Interface
+▼
+Platform Backend
+├── Listings & Users
+├── Escrow & Payments
+├── Logistics Coordination
+├── Media Evidence Storage
+├── Trust Score Engine
+└── Dispute Resolution
 │
-└── Platform Backend
-    ├── Authentication & KYC Service
-    ├── Product & Listing Service
-    ├── Escrow & Payment Service
-    ├── Logistics Coordination Service
-    ├── Media Evidence Storage
-    ├── Trust Score Engine
-    ├── Dispute Resolution Engine
-    └── Notification & Chatbot Service
+▼
+Verified Delivery Partner
 
 
 ---
@@ -62,10 +61,10 @@ Client Apps (Web / Mobile)
 
 1. Seller lists dress (photos + details)
 2. Buyer browses and bargains
-3. Buyer pays 10% advance as security fund
+3. Buyer pays 10% advance
 4. Platform schedules pickup
-5. Pickup video & condition check from the seller's location
-6. Item dual verified at platform hub
+5. Pickup video & condition check
+6. Item verified at platform hub
 7. Delivered to buyer
 8. Buyer records unboxing video
 9. 24–48 hour inspection window
@@ -104,6 +103,22 @@ Client Apps (Web / Mobile)
 - Seller trust score system
 - Wallet for partial refunds
 - AI chatbot for user support
+
+---
+
+## 🚀 MVP Features (Hackathon Scope)
+
+### Must-Have
+- Escrow system
+- Platform pickup flow
+- Unboxing video rule
+- Inspection window
+- Forced sale logic
+
+### Nice-to-Have
+- Trust score
+- Partial refunds
+- Seller payout delay
 
 ---
 

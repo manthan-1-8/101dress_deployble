@@ -160,6 +160,13 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = D
 def read_items(session: Session = Depends(get_session)):
     return session.exec(select(Item)).all()
 
+@app.get("/api/items/{item_id}", response_model=Item)
+def read_item(item_id: int, session: Session = Depends(get_session)):
+    item = session.get(Item, item_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return item
+
 @app.post("/api/items", response_model=Item)
 def create_item(item: Item, current_user: User = Depends(get_current_user), session: Session = Depends(get_session)):
     item.seller_id = current_user.id
