@@ -23,19 +23,19 @@ const Hero = () => {
   const parallaxOffset = scrollY * 0.5;
 
   return (
-    <section 
+    <section
       ref={heroRef}
       className="relative h-screen w-full overflow-hidden"
     >
       {/* Background Image with Parallax */}
-      <div 
+      <div
         className="absolute inset-0 w-full h-[130%] animate-parallax"
-        style={{ 
+        style={{
           transform: `translateY(-${parallaxOffset}px)`,
           transition: 'transform 0.1s ease-out'
         }}
       >
-        <img 
+        <img
           src={heroImage}
           alt="Luxury fashion editorial - curated couture"
           className="w-full h-full object-cover object-center animate-scale-subtle"
@@ -51,7 +51,7 @@ const Hero = () => {
         <div className="max-w-2xl">
           {/* Accent Line */}
           <div className="w-16 h-px bg-gold mb-8 animate-fade-in-up" />
-          
+
           {/* Top Accent Text */}
           <p className="text-editorial-accent text-ivory/90 mb-6 animate-fade-in-up">
             The Future of Luxury Fashion
@@ -72,15 +72,15 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mt-12 animate-fade-in-up-delayed-3">
-            <Link 
-              to="/products" 
-              className="btn-editorial-light hover-glow inline-block text-center"
+            <Link
+              to="/products"
+              className="px-8 py-4 bg-ivory text-foreground font-sans text-xs uppercase tracking-[0.25em] transition-all duration-300 ease-out hover:bg-gold hover:text-white shadow-xl hover:shadow-2xl hover:scale-105 rounded-xl text-center font-medium"
             >
               Explore Collection
             </Link>
-            <a 
-              href="#features" 
-              className="px-8 py-4 bg-ivory/10 backdrop-blur-sm border border-ivory/30 text-ivory font-sans text-xs uppercase tracking-[0.25em] transition-all duration-700 ease-out hover:bg-ivory hover:text-foreground text-center"
+            <a
+              href="#features"
+              className="px-8 py-4 bg-black/30 backdrop-blur-md border border-ivory/40 text-ivory font-sans text-xs uppercase tracking-[0.25em] transition-all duration-300 ease-out hover:bg-ivory hover:text-foreground rounded-xl hover:shadow-lg text-center font-medium"
             >
               How It Works
             </a>

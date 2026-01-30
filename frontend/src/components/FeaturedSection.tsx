@@ -119,7 +119,7 @@ const FeaturedSection = () => {
           }`}>
           <a
             href="#products"
-            className="btn-editorial inline-block hover-glow"
+            className="px-8 py-4 bg-ivory text-foreground font-sans text-xs uppercase tracking-[0.25em] transition-all duration-300 ease-out hover:bg-gold hover:text-white shadow-xl hover:shadow-2xl hover:scale-105 rounded-xl inline-block font-medium"
           >
             View All Pieces
           </a>

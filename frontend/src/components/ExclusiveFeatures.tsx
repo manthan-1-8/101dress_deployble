@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { 
-  Sparkles, 
-  MessageCircle, 
-  ShieldCheck, 
-  Camera, 
-  Lock, 
-  Award 
+import {
+  Sparkles,
+  MessageCircle,
+  ShieldCheck,
+  Camera,
+  Lock,
+  Award
 } from 'lucide-react';
 
 const features = [
@@ -69,23 +69,22 @@ const ExclusiveFeatures = () => {
   }, []);
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       id="features"
       className="py-24 md:py-32 bg-secondary/30"
     >
       <div className="container mx-auto px-6 md:px-12">
         {/* Section Header */}
-        <div className={`text-center mb-20 transition-all duration-1000 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
+        <div className={`text-center mb-20 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          }`}>
           <div className="flex justify-center mb-6">
             <div className="w-16 h-px bg-gold" />
           </div>
           <p className="text-editorial-accent text-muted-foreground mb-4">
             Why Choose Us
           </p>
-          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-foreground font-light">
+          <h2 className="font-serif text-5xl md:text-6xl lg:text-7xl text-foreground font-light">
             Exclusive Features
           </h2>
           <p className="mt-6 text-muted-foreground max-w-2xl mx-auto font-light">
@@ -98,18 +97,17 @@ const ExclusiveFeatures = () => {
           {features.map((feature, index) => (
             <div
               key={feature.title}
-              className={`group relative p-8 bg-background border border-border/50 transition-all duration-700 hover:border-gold/30 hover:shadow-lg ${
-                isVisible 
-                  ? 'opacity-100 translate-y-0' 
+              className={`group relative p-8 bg-background border border-border/50 transition-all duration-700 hover:border-gold/30 hover:shadow-lg ${isVisible
+                  ? 'opacity-100 translate-y-0'
                   : 'opacity-0 translate-y-10'
-              }`}
+                }`}
               style={{ transitionDelay: `${index * 100 + 200}ms` }}
             >
               {/* Accent Tag */}
               <span className="absolute top-4 right-4 text-xs uppercase tracking-[0.2em] text-gold font-sans">
                 {feature.accent}
               </span>
-              
+
               {/* Icon */}
               <div className="mb-6 relative">
                 <div className="w-14 h-14 flex items-center justify-center border border-gold/30 transition-all duration-500 group-hover:border-gold group-hover:bg-gold/5">
@@ -132,12 +130,11 @@ const ExclusiveFeatures = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className={`text-center mt-20 transition-all duration-1000 delay-700 ${
-          isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
-        }`}>
-          <a 
-            href="#collection" 
-            className="btn-editorial inline-block hover-glow"
+        <div className={`text-center mt-20 transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+          }`}>
+          <a
+            href="#collection"
+            className="px-8 py-4 bg-ivory text-foreground font-sans text-xs uppercase tracking-[0.25em] transition-all duration-300 ease-out hover:bg-gold hover:text-white shadow-xl hover:shadow-2xl hover:scale-105 rounded-xl inline-block font-medium"
           >
             Start Your Journey
           </a>

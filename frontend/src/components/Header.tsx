@@ -49,6 +49,12 @@ const Header = () => {
             >
               Sell
             </Link>
+            <Link
+              to="/my-listings"
+              className={`nav-link text-nav transition-colors duration-500 ${textColor}`}
+            >
+              My Listings
+            </Link>
           </div>
 
           {/* Center Logo */}
