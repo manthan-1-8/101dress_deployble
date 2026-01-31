@@ -29,7 +29,7 @@ const MyListings = () => {
         // Fetch user items (u1)
         const fetchItems = async () => {
             try {
-                const res = await fetch('http://localhost:8001/api/items?seller_id=u1');
+                const res = await fetch('/api/items?seller_id=u1');
                 if (res.ok) {
                     const data = await res.json();
                     setItems(data);

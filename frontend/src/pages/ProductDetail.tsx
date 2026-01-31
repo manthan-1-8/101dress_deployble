@@ -51,7 +51,7 @@ interface Seller {
 }
 
 const fetchProduct = async (id: string): Promise<Product> => {
-  const response = await fetch(`http://localhost:8001/api/items/${id}`);
+  const response = await fetch(`/api/items/${id}`);
   if (!response.ok) {
     throw new Error('Failed to fetch product');
   }
@@ -59,7 +59,7 @@ const fetchProduct = async (id: string): Promise<Product> => {
 };
 
 const fetchSeller = async (sellerId: string): Promise<Seller> => {
-  const response = await fetch(`http://localhost:8001/api/users/${sellerId}`);
+  const response = await fetch(`/api/users/${sellerId}`);
   if (!response.ok) {
     throw new Error('Failed to fetch seller');
   }

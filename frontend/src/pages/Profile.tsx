@@ -55,14 +55,14 @@ const fetchUser = async (): Promise<User> => {
 };
 
 const fetchUserItems = async (): Promise<Item[]> => {
-  const response = await fetch('http://localhost:8001/api/items');
+  const response = await fetch('/api/items');
   if (!response.ok) throw new Error('Failed to fetch items');
   const items = await response.json();
   return items.slice(0, 4); // Mock user items
 };
 
 const fetchUserOrders = async (): Promise<Order[]> => {
-  const response = await fetch('http://localhost:8001/api/orders?user_id=u1');
+  const response = await fetch('/api/orders?user_id=u1');
   if (!response.ok) throw new Error('Failed to fetch orders');
   return response.json();
 };

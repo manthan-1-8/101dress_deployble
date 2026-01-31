@@ -93,6 +93,8 @@ UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 # But uploading via backend saves to disk. We need to tell backend where to save.
 # Let's save to frontend/public so Vite sees it.
 
+
+
 @app.post("/api/upload")
 async def upload_file(file: UploadFile = File(...)):
     file_location = UPLOAD_DIR / file.filename
@@ -438,3 +440,12 @@ def read_orders(user_id: Optional[str] = None, session: Session = Depends(get_se
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("backend.main:app", host="0.0.0.0", port=8001, reload=True)
+
+# --- STATIC FILES (Served after API routes) ---
+# Serve static files from the frontend build directory
+if os.path.exists("frontend/dist"):
+    app.mount("/assets", StaticFiles(directory="frontend/dist/assets"), name="assets")
+    # SPA Catch-all
+    app.mount("/", StaticFiles(directory="frontend/dist", html=True), name="frontend")
+else:
+    print("Warning: frontend/dist not found. Run 'npm run build' in frontend directory.")

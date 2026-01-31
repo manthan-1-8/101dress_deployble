@@ -71,7 +71,7 @@ const SellItem = () => {
       const uploadData = new FormData();
       uploadData.append('file', images.front);
 
-      const uploadRes = await fetch('http://localhost:8001/api/upload', {
+      const uploadRes = await fetch('/api/upload', {
         method: 'POST',
         body: uploadData,
       });
@@ -114,7 +114,7 @@ const SellItem = () => {
       // Temporary: Auto-login to get token if missing (Dev helper)
       let authToken = token;
       if (!authToken) {
-        const loginRes = await fetch('http://localhost:8001/api/auth/login', {
+        const loginRes = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({ 'username': 'alex@example.com', 'password': 'password123' })
@@ -123,7 +123,7 @@ const SellItem = () => {
         authToken = loginData.access_token;
       }
 
-      const createRes = await fetch('http://localhost:8001/api/items', {
+      const createRes = await fetch('/api/items', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

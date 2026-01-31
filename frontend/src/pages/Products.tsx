@@ -40,7 +40,7 @@ interface Product {
 }
 
 const fetchProducts = async (): Promise<Product[]> => {
-  const response = await fetch('http://localhost:8001/api/items');
+  const response = await fetch('/api/items');
   if (!response.ok) {
     throw new Error('Failed to fetch products');
   }
