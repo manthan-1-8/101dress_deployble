@@ -17,8 +17,7 @@ import {
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Upload, Camera, Sparkles, CheckCircle, ImagePlus } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast"; // Assuming use-toast exists, or I can use basic alert for now if not. Ah, I saw Toaster in App.tsx. I'll use simple state for modal.
+import { Camera, Sparkles, CheckCircle, ImagePlus } from 'lucide-react';
 
 const SellItem = () => {
   const navigate = useNavigate();

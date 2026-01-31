@@ -21,7 +21,6 @@ interface Item {
 }
 
 const MyListings = () => {
-    const [activeTab, setActiveTab] = useState('current');
     const [items, setItems] = useState<Item[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -72,7 +71,7 @@ const MyListings = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                     {/* Listings Column */}
                     <div className="lg:col-span-2">
-                        <Tabs defaultValue="current" className="w-full" onValueChange={setActiveTab}>
+                        <Tabs defaultValue="current" className="w-full">
                             <TabsList className="mb-8 bg-secondary/30 p-1 rounded-full w-full max-w-md">
                                 <TabsTrigger value="current" className="rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm w-1/2">Current Listings</TabsTrigger>
                                 <TabsTrigger value="past" className="rounded-full data-[state=active]:bg-background data-[state=active]:shadow-sm w-1/2">Past Listings</TabsTrigger>
@@ -142,10 +141,40 @@ const MyListings = () => {
                                 )}
                             </TabsContent>
 
-                            <TabsContent value="past">
-                                <div className="text-center py-12 text-muted-foreground bg-secondary/10 rounded-xl">
-                                    <p>No past listings found.</p>
-                                </div>
+                            <TabsContent value="past" className="space-y-6">
+                                {loading ? (
+                                    <div className="text-center py-12 text-muted-foreground">Loading listings...</div>
+                                ) : pastListings.length === 0 ? (
+                                    <div className="text-center py-12 text-muted-foreground bg-secondary/10 rounded-xl">
+                                        <p>No past listings found.</p>
+                                    </div>
+                                ) : (
+                                    pastListings.map((item) => (
+                                        <Card key={item.id} className="p-6 border-border opacity-75">
+                                            <div className="flex gap-6">
+                                                <div className="w-32 h-32 flex-shrink-0 bg-muted rounded-lg overflow-hidden relative grayscale">
+                                                    <img src={item.image.startsWith('http') || item.image.startsWith('/') ? item.image : `/assets/${item.image}`} alt={item.title} className="w-full h-full object-cover" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <div>
+                                                            <h3 className="font-serif text-xl text-foreground">{item.title}</h3>
+                                                            <p className="text-sm text-muted-foreground">{item.brand}</p>
+                                                        </div>
+                                                        <Badge variant="secondary" className="uppercase tracking-widest text-[10px]">
+                                                            {item.status}
+                                                        </Badge>
+                                                    </div>
+                                                    <div className="flex items-center gap-4 mt-4">
+                                                        <div className="text-sm text-muted-foreground">
+                                                            {item.sale_price && <span>Sold for: ₹{item.sale_price.toLocaleString()}</span>}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Card>
+                                    ))
+                                )}
                             </TabsContent>
                         </Tabs>
                     </div>

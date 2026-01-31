@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -68,7 +68,6 @@ const fetchSeller = async (sellerId: string): Promise<Seller> => {
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 

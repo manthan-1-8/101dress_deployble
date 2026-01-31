@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   ShieldCheck,
-  Plus,
   Settings,
 } from 'lucide-react';
 
@@ -54,12 +53,7 @@ const fetchUser = async (): Promise<User> => {
   };
 };
 
-const fetchUserItems = async (): Promise<Item[]> => {
-  const response = await fetch('/api/items');
-  if (!response.ok) throw new Error('Failed to fetch items');
-  const items = await response.json();
-  return items.slice(0, 4); // Mock user items
-};
+
 
 const fetchUserOrders = async (): Promise<Order[]> => {
   const response = await fetch('/api/orders?user_id=u1');
@@ -69,17 +63,10 @@ const fetchUserOrders = async (): Promise<Order[]> => {
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('overview');
-  const [filterType, setFilterType] = useState('all');
-  const [sortOrder, setSortOrder] = useState('default');
 
   const { data: user } = useQuery({
     queryKey: ['user'],
     queryFn: fetchUser,
-  });
-
-  const { data: items = [] } = useQuery({
-    queryKey: ['user-items'],
-    queryFn: fetchUserItems,
   });
 
   const { data: orders = [] } = useQuery({
@@ -102,25 +89,6 @@ const Profile = () => {
       </main>
     );
   }
-
-  const filteredItems = items
-    .filter((item) => {
-      if (filterType === 'all') return true;
-      // specific logic: if item.type is 'both', it shows in both buy and rent filters
-      // if item.type matches the filter exactly
-      if (item.type === 'both') return true;
-      return item.type === filterType;
-    })
-    .sort((a, b) => {
-      if (sortOrder === 'default') return 0;
-
-      const priceA = a.sale_price || a.rent_price || 0;
-      const priceB = b.sale_price || b.rent_price || 0;
-
-      if (sortOrder === 'price-asc') return priceA - priceB;
-      if (sortOrder === 'price-desc') return priceB - priceA;
-      return 0;
-    });
 
   return (
     <main className="min-h-screen bg-background">
