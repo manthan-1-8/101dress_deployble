@@ -1,4 +1,4 @@
-# 👗 101 Dresses  
+# 👗 101 Dresses
 ### A Trust-First Resale Platform for Occasion Wear
 
 ---
@@ -29,101 +29,99 @@ We prevent fraud by controlling:
 
 ---
 
-## 🎯 Platform Goals
+## 🚀 Features
 
-- Prevent theft and return abuse
-- Protect both buyers and sellers
-- Resolve disputes using proof, not opinions
-- Build trust in high-value fashion resale
-
----
-
-## 🏗️ System Architecture (High-Level)
-
-Buyer App / Seller App
-│
-▼
-Platform Backend
-├── Listings & Users
-├── Escrow & Payments
-├── Logistics Coordination
-├── Media Evidence Storage
-├── Trust Score Engine
-└── Dispute Resolution
-│
-▼
-Verified Delivery Partner
-
+- **🛡️ Secure Authentication**: User signup and login protected by JWT authentication.
+- **💰 Escrow System**: Payments are held in a secure escrow balance until the buyer confirms the item or the inspection period ends.
+- **🛍️ Managed Marketplace**: Browse high-value items with detailed condition reports.
+- **📸 Evidence-Based**: Mandatory photo/video evidence for listings and disputes.
+- **✅ Verification**: Admin-verified listings (simulated in this demo).
+- **⏱️ Inspection Window**: 48-hour automated timer for buyers to inspect items before funds are released.
 
 ---
 
-## 🔄 Transaction Flow
+## 📸 Screenshots
 
-1. Seller lists dress (photos + details)
-2. Buyer browses and bargains
-3. Buyer pays 10% advance
-4. Platform schedules pickup
-5. Pickup video & condition check
-6. Item verified at platform hub
-7. Delivered to buyer
-8. Buyer records unboxing video
-9. 24–48 hour inspection window
-10. Escrow released or dispute raised
+| Dashboard | Item Details |
+|-----------|--------------|
+| ![Dashboard](frontend/public/assets/dresses.png) | ![Item Details](frontend/public/assets/acne_jacket.png) |
+
+| Categories | Featured Items |
+|------------|----------------|
+| ![Categories](frontend/public/assets/gucci_belt.png) | ![Featured](frontend/public/assets/balenciaga_sneakers.png) |
 
 ---
 
-## 🔐 Theft & Fraud Prevention
+## 🛠️ Technical Architecture
 
-- No direct seller-to-buyer shipping
-- Mandatory pickup and unboxing videos
-- Tamper-proof packaging with QR
-- Time-limited inspection window
-- Evidence-only dispute resolution
-- Forced sale if buyer keeps item
-- Silent trust score enforcement
+The project follows a modern client-server architecture:
 
----
+### Tech Stack
+- **Frontend**: [React](https://react.dev/) + [Vite](https://vitejs.dev/)
+  - **Styling**: Tailwind CSS + Radix UI (shadcn/ui)
+  - **State/Data**: React Query
+- **Backend**: [FastAPI](https://fastapi.tiangolo.com/) (Python)
+  - **Database**: SQLModel (SQLite)
+  - **Auth**: Python-Jose (JWT), Passlib (Bcrypt)
 
-## 💰 Payment & Escrow Logic
-
-- Buyer money locked in escrow
-- Released after:
-  - Buyer approval OR
-  - Inspection window expiry
-- Refunds allowed only for:
-  - Item mismatch
-  - Undisclosed damage
+### High-Level Flow
+```mermaid
+graph LR
+    A[React Frontend] <-->|REST API| B[FastAPI Backend]
+    B <-->|ORM| C[(SQLite Database)]
+    B -- Serves --> D[Static Assets]
+```
 
 ---
 
-## 🧠 Smart Features
+## 🏁 Getting Started
 
-- AI-based dress recommendations
-- Smart bargaining assistance
-- Seller trust score system
-- Wallet for partial refunds
-- AI chatbot for user support
+### Prerequisites
+- **Python** (3.9 or higher)
+- **Node.js** (18 or higher)
+
+### Quick Start (Windows)
+The easiest way to run the project is using the helper script:
+
+1. Double-click **`start_dev.bat`** in the project root.
+2. This will:
+   - Install Python dependencies.
+   - Start the Backend server on `http://localhost:8001`.
+   - Install Node.js dependencies.
+   - Start the Frontend dev server.
+
+### Manual Setup
+
+If you prefer to run services manually:
+
+#### 1. Backend
+```powershell
+pip install fastapi uvicorn sqlmodel python-jose[cryptography] passlib[bcrypt] python-multipart
+python -m uvicorn backend.main:app --reload --port 8001
+```
+*Server running at: http://localhost:8001*
+
+#### 2. Frontend
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+*App running at: usually http://localhost:5173*
 
 ---
 
-## 🚀 MVP Features (Hackathon Scope)
+## 📂 Project Structure
 
-### Must-Have
-- Escrow system
-- Platform pickup flow
-- Unboxing video rule
-- Inspection window
-- Forced sale logic
-
-### Nice-to-Have
-- Trust score
-- Partial refunds
-- Seller payout delay
-
----
-
-## 🏁 Conclusion
-
-**101 Dresses** solves the core reason fashion resale platforms fail — lack of trust.
-
-By owning the transaction instead of just listing it, we make fashion resale **safe, fair, and scalable**.
+```
+101-dress/
+├── backend/            # FastAPI Application
+│   ├── main.py         # App entry point & endpoints
+│   ├── models.py       # Database models (User, Item, Order)
+│   └── database_v2.db  # SQLite Database
+├── frontend/           # React Application
+│   ├── src/            # Source code
+│   └── public/         # Static assets
+├── start_dev.bat       # Startup script
+└── README.md           # Documentation
+```
