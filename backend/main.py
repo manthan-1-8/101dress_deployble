@@ -10,7 +10,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from sqlmodel import Session, SQLModel, create_engine, select
-from .models import User, Item, Order, ItemStatus, UserCreate, Token, UserRead, OrderStatus
+from backend.models import (
+    User,
+    Item,
+    Order,
+    ItemStatus,
+    UserCreate,
+    Token,
+    UserRead,
+    OrderStatus,
+)
 
 # --- RESPONSE MODELS ---
 class OrderWithItem(SQLModel):
