@@ -30,6 +30,6 @@ ENV PORT=8000
 EXPOSE $PORT
 
 # Copy and setup entrypoint script
-# Start the application using Shell form to ensure $PORT variable expansion works correctly
-# "Shell form" (no brackets) runs the command in /bin/sh -c automatically
-CMD uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Start via Python module to use the if __name__ == "__main__" block in main.py
+# This delegates PORT handling to Python code, avoiding Docker shell issues.
+CMD ["python", "-m", "backend.main"]
