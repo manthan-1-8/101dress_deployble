@@ -1,11 +1,30 @@
-import { useParams, Link } from 'react-router-dom';
+import { useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ShieldCheck, ArrowLeft, Package, Truck, RotateCcw } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { ShieldCheck, ArrowLeft, Package, Truck, RotateCcw, CheckCircle } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogDescription
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
 
 interface Product {
   id: number;
@@ -49,6 +68,9 @@ const fetchSeller = async (sellerId: string): Promise<Seller> => {
 
 const ProductDetail = () => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const { data: product, isLoading: productLoading } = useQuery({
     queryKey: ['product', id],
@@ -61,6 +83,11 @@ const ProductDetail = () => {
     queryFn: () => fetchSeller(product!.seller_id),
     enabled: !!product?.seller_id,
   });
+
+  const handlePlaceOrder = () => {
+    setIsOrderModalOpen(false);
+    setShowSuccess(true);
+  };
 
   if (productLoading) {
     return (
@@ -98,8 +125,47 @@ const ProductDetail = () => {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background relative">
       <Header />
+
+      {/* Success Animation Modal */}
+      {showSuccess && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/90 backdrop-blur-sm animate-in fade-in duration-300">
+          <div className="bg-card p-12 rounded-[2rem] shadow-2xl border border-gold/20 max-w-lg w-full text-center transform animate-in zoom-in-95 duration-500">
+            <div className="flex justify-center mb-8">
+              <div className="w-24 h-24 bg-gold/10 rounded-full flex items-center justify-center animate-bounce-twice">
+                <CheckCircle className="w-12 h-12 text-gold" />
+              </div>
+            </div>
+
+            <h3 className="font-serif text-4xl text-foreground mb-4">Order Confirmed!</h3>
+            <p className="text-xl text-muted-foreground mb-8">Your order has been placed successfully.</p>
+
+            <div className="bg-muted/50 p-6 rounded-2xl flex items-center gap-6 text-left mb-8 border border-border/50">
+              <div className="w-20 h-20 rounded-lg overflow-hidden bg-white shadow-sm flex-shrink-0">
+                <img
+                  src={product.image}
+                  alt={product.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="font-serif text-2xl text-foreground line-clamp-1 mb-1">{product.title}</p>
+                <p className="text-lg font-serif text-gold">
+                  Total: ₹{product.sale_price?.toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            <Button
+              className="w-full py-6 text-lg bg-foreground text-background hover:bg-foreground/90 rounded-xl"
+              onClick={() => setShowSuccess(false)}
+            >
+              Continue Shopping
+            </Button>
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto px-6 md:px-12 pt-32 pb-20">
         {/* Back Button */}
@@ -164,9 +230,66 @@ const ProductDetail = () => {
                       ₹{product.sale_price.toLocaleString()}
                     </p>
                   </div>
-                  <Button size="lg" className="btn-editorial-dark">
-                    Buy Now
-                  </Button>
+
+                  <Dialog open={isOrderModalOpen} onOpenChange={setIsOrderModalOpen}>
+                    <DialogTrigger asChild>
+                      <Button size="lg" className="btn-editorial-dark">
+                        Buy Now
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle className="font-serif text-2xl">Confirm Order</DialogTitle>
+                        <DialogDescription>
+                          Complete your purchase for <strong>{product.title}</strong>
+                        </DialogDescription>
+                      </DialogHeader>
+
+                      <div className="grid gap-6 py-4">
+                        <div className="space-y-2">
+                          <Label>Product Amount</Label>
+                          <div className="text-2xl font-medium font-serif">₹{product.sale_price.toLocaleString()}</div>
+                        </div>
+
+                        <div className="space-y-4">
+                          <h4 className="font-medium border-b pb-2">Delivery Information</h4>
+                          <div className="grid gap-2">
+                            <Label htmlFor="address">Shipping Address</Label>
+                            <Input id="address" placeholder="123 Fashion St, NY" />
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2">
+                              <Label htmlFor="city">City</Label>
+                              <Input id="city" placeholder="New York" />
+                            </div>
+                            <div className="grid gap-2">
+                              <Label htmlFor="zip">Zip Code</Label>
+                              <Input id="zip" placeholder="10001" />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-4">
+                          <h4 className="font-medium border-b pb-2">Payment Method</h4>
+                          <Select defaultValue="card">
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select payment method" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="card">Credit/Debit Card</SelectItem>
+                              <SelectItem value="upi">UPI / Netbanking</SelectItem>
+                              <SelectItem value="cod">Cash on Delivery</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <DialogFooter>
+                        <Button variant="outline" onClick={() => setIsOrderModalOpen(false)}>Cancel</Button>
+                        <Button onClick={handlePlaceOrder} className="bg-gold hover:bg-gold/90 text-white">Confirm Purchase</Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </div>
               )}
 
@@ -185,9 +308,22 @@ const ProductDetail = () => {
                       </p>
                     )}
                   </div>
-                  <Button size="lg" variant="outline" className="border-2">
-                    Rent Item
-                  </Button>
+                  <Link
+                    to="/chat"
+                    state={{
+                      product: {
+                        id: product.id,
+                        title: product.title,
+                        price: product.rent_price,
+                        seller_id: product.seller_id,
+                        type: 'rent'
+                      }
+                    }}
+                  >
+                    <Button size="lg" variant="outline" className="border-2">
+                      Rent Item
+                    </Button>
+                  </Link>
                 </div>
               )}
             </Card>
