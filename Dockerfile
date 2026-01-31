@@ -30,10 +30,6 @@ ENV PORT=8000
 EXPOSE $PORT
 
 # Copy and setup entrypoint script
-# Create entrypoint script safely within the container to avoid Windows CRLF issues
-RUN echo '#!/bin/sh' > /start.sh && \
-    echo 'echo "Starting with port: ${PORT:-8000}"' >> /start.sh && \
-    echo 'exec uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}' >> /start.sh && \
-    chmod +x /start.sh
-
-CMD ["/start.sh"]
+# Start the application using Shell form to ensure $PORT variable expansion works correctly
+# "Shell form" (no brackets) runs the command in /bin/sh -c automatically
+CMD uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}
