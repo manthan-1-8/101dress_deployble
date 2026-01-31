@@ -313,6 +313,12 @@ def read_user(user_id: str, session: Session = Depends(get_session)):
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+@app.get("/api/orders", response_model=List[Order])
+def read_orders(user_id: Optional[str] = None, session: Session = Depends(get_session)):
+    if user_id:
+        return session.exec(select(Order).where((Order.buyer_id == user_id) | (Order.seller_id == user_id))).all()
+    return session.exec(select(Order)).all()
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("backend.main:app", host="0.0.0.0", port=8001, reload=True)

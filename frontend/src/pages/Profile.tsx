@@ -69,6 +69,8 @@ const fetchUserOrders = async (): Promise<Order[]> => {
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [filterType, setFilterType] = useState('all');
+  const [sortOrder, setSortOrder] = useState('default');
 
   const { data: user } = useQuery({
     queryKey: ['user'],
@@ -100,9 +102,6 @@ const Profile = () => {
       </main>
     );
   }
-
-  const [filterType, setFilterType] = useState('all');
-  const [sortOrder, setSortOrder] = useState('default');
 
   const filteredItems = items
     .filter((item) => {
