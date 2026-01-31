@@ -29,5 +29,8 @@ COPY --from=frontend-build /app/frontend/dist ./frontend/dist
 ENV PORT=8000
 EXPOSE $PORT
 
-# Command to run the application using sh to expand $PORT
-CMD ["/bin/sh", "-c", "uvicorn backend.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Copy and setup entrypoint script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
+CMD ["/start.sh"]
