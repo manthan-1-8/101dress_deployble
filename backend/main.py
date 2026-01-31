@@ -439,7 +439,8 @@ def read_orders(user_id: Optional[str] = None, session: Session = Depends(get_se
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8001, reload=True)
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run(app, host="0.0.0.0", port=port)
 
 # --- STATIC FILES (Served after API routes) ---
 # Serve static files from the frontend build directory
