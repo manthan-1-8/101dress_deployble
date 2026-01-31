@@ -173,48 +173,14 @@ const Profile = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full md:w-auto md:inline-grid grid-cols-3 mb-8">
+          <TabsList className="grid w-full md:w-auto md:inline-grid grid-cols-2 mb-8">
             <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="listings">My Listings</TabsTrigger>
             <TabsTrigger value="orders">Orders</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-8">
-              {/* Active Listings */}
-              <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="font-serif text-2xl font-medium">Active Listings</h3>
-                  <Link to="/sell">
-                    <Button size="sm" variant="outline">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Add New
-                    </Button>
-                  </Link>
-                </div>
-                <div className="space-y-4">
-                  {items.slice(0, 3).map((item) => (
-                    <Card key={item.id} className="p-4 border-border hover:shadow-md transition-shadow">
-                      <div className="flex gap-4">
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-20 h-20 object-cover rounded"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium truncate">{item.title}</h4>
-                          <p className="text-sm text-muted-foreground">{item.brand}</p>
-                          <Badge variant="outline" className="mt-1">
-                            {item.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
+            <div className="grid md:grid-cols-1 gap-8">
               {/* Recent Orders */}
               <div>
                 <div className="flex justify-between items-center mb-4">
@@ -256,85 +222,6 @@ const Profile = () => {
             </div>
           </TabsContent>
 
-          {/* Listings Tab */}
-          <TabsContent value="listings">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-              <div>
-                <h3 className="font-serif text-2xl font-medium mb-2">All Listings</h3>
-                <div className="flex gap-2">
-                  {['all', 'sale', 'rent'].map((type) => (
-                    <button
-                      key={type}
-                      onClick={() => setFilterType(type)}
-                      className={`text-sm px-3 py-1 rounded-full border transition-colors ${filterType === type
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'bg-transparent text-muted-foreground border-border hover:border-primary'
-                        }`}
-                    >
-                      {type.charAt(0).toUpperCase() + type.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 w-full md:w-auto">
-                <select
-                  value={sortOrder}
-                  onChange={(e) => setSortOrder(e.target.value)}
-                  className="text-sm border border-border bg-background rounded-md px-3 py-2 outline-none focus:border-gold"
-                >
-                  <option value="default">Sort by: Relevancy</option>
-                  <option value="price-asc">Price: Low to High</option>
-                  <option value="price-desc">Price: High to Low</option>
-                </select>
-
-                <Link to="/sell">
-                  <Button className="btn-editorial-dark whitespace-nowrap">
-                    <Plus className="w-4 h-4 mr-2" />
-                    List Item
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredItems.map((item) => (
-                <Card key={item.id} className="overflow-hidden border-border hover:shadow-lg transition-shadow">
-                  <img
-                    src={item.image}
-                    alt={item.title}
-                    className="w-full aspect-[3/4] object-cover"
-                  />
-                  <div className="p-4">
-                    <h4 className="font-serif text-lg font-medium mb-1 truncate">
-                      {item.title}
-                    </h4>
-                    <p className="text-sm text-muted-foreground mb-3">{item.brand}</p>
-                    <div className="flex justify-between items-center">
-                      <Badge variant="outline" className="capitalize">
-                        {item.status}
-                      </Badge>
-                      {item.sale_price && (
-                        <span className="font-medium">
-                          ₹{item.sale_price.toLocaleString()}
-                        </span>
-                      )}
-                      {!item.sale_price && item.rent_price && (
-                        <span className="font-medium">
-                          ₹{item.rent_price.toLocaleString()}/day
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              ))}
-              {filteredItems.length === 0 && (
-                <div className="col-span-full py-12 text-center text-muted-foreground">
-                  No listings found matching your criteria.
-                </div>
-              )}
-            </div>
-          </TabsContent>
 
           {/* Orders Tab */}
           <TabsContent value="orders">

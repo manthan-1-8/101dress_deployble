@@ -395,7 +395,7 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), session: Session = D
 
 @app.get("/api/items", response_model=List[Item])
 def read_items(seller_id: Optional[str] = None, session: Session = Depends(get_session)):
-    query = select(Item)
+    query = select(Item).order_by(Item.id.desc())
     if seller_id:
         query = query.where(Item.seller_id == seller_id)
     return session.exec(query).all()

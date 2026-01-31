@@ -127,10 +127,12 @@ const MyListings = () => {
                                                                 <AlertCircle className="w-4 h-4" />
                                                                 <span className="text-sm font-medium">1 person showed interest!</span>
                                                             </div>
-                                                            <Button size="sm" variant="outline" className="h-8 text-xs gap-2 hover:bg-orange-50 hover:text-orange-800 border-orange-200">
-                                                                <MessageCircle className="w-3 h-3" />
-                                                                Chat
-                                                            </Button>
+                                                            <Link to="/chat">
+                                                                <Button size="sm" variant="outline" className="h-8 text-xs gap-2 hover:bg-orange-50 hover:text-orange-800 border-orange-200">
+                                                                    <MessageCircle className="w-3 h-3" />
+                                                                    Chat
+                                                                </Button>
+                                                            </Link>
                                                         </div>
                                                     )}
                                                 </div>

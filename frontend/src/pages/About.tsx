@@ -9,7 +9,7 @@ const AboutPage = () => {
             <Header />
             <div className="pt-24">
                 <AboutSection />
-                <div className="container mx-auto px-6 md:px-12 pb-24">
+                <div className="container mx-auto px-6 md:px-12 pb-24 mt-24">
                     <div className="bg-secondary/20 rounded-3xl p-10 md:p-16 border border-border">
                         <h3 className="font-serif text-3xl mb-8 text-center">The 101 Handover Process</h3>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -19,7 +19,7 @@ const AboutPage = () => {
                                 { title: 'Confidence', desc: 'Our dual-escrow system ensures both buyer and seller are protected until handover.' }
                             ].map((item, idx) => (
                                 <div key={idx} className="space-y-4">
-                                    <div className="text-4xl font-serif text-gold/30 italic">0{idx + 1}</div>
+                                    <div className="text-4xl font-serif text-foreground/80 italic">0{idx + 1}</div>
                                     <h4 className="font-serif text-xl">{item.title}</h4>
                                     <p className="text-muted-foreground leading-relaxed">{item.desc}</p>
                                 </div>

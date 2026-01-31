@@ -68,7 +68,13 @@ const AboutSection = () => {
             }`}>
             <div className="relative">
               {/* Decorative frame */}
-              <div className="aspect-[3/4] bg-secondary" />
+              <div className="aspect-[3/4] bg-secondary overflow-hidden">
+                <img
+                  src="/assets/ce2b5dd884344227fac28db59bbc6956.jpg"
+                  alt="Luxury Fashion"
+                  className="w-full h-full object-cover opacity-90 hover:scale-105 transition-transform duration-700"
+                />
+              </div>
               <div className="absolute -bottom-6 -right-6 w-32 h-32 border border-accent" />
               <div className="absolute -top-6 -left-6 w-20 h-20 border border-gold/30" />
             </div>
